@@ -3,11 +3,14 @@
     <Header title="Hire Me Messages" />
 
     <!-- Loading / Error -->
-    <div v-if="loading" class="text-center py-10 text-gray-900 dark:text-gray-100">
+    <div
+      v-if="loading"
+      class="text-center py-10 text-gray-900 dark:text-gray-100"
+    >
       Loading messages...
     </div>
     <div v-else-if="error" class="text-center py-10 text-red-500">
-      {{ error.message || 'Failed to load messages' }}
+      {{ error.message || "Failed to load messages" }}
     </div>
 
     <!-- Messages Table -->
@@ -15,8 +18,12 @@
       v-else
       class="bg-white dark:bg-gray-800 shadow rounded-xl overflow-hidden mt-4"
     >
-      <table class="min-w-full text-sm text-left text-gray-900 dark:text-gray-100">
-        <thead class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-200">
+      <table
+        class="min-w-full text-sm text-left text-gray-900 dark:text-gray-100"
+      >
+        <thead
+          class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-200"
+        >
           <tr>
             <th class="px-6 py-3">Name</th>
             <th class="px-6 py-3">Email</th>
@@ -49,7 +56,10 @@
             </td>
           </tr>
           <tr v-if="paginatedMessages.length === 0">
-            <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+            <td
+              colspan="4"
+              class="px-6 py-4 text-center text-gray-500 dark:text-gray-400"
+            >
               No messages found.
             </td>
           </tr>
@@ -74,13 +84,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useContactMessages } from '../../../composables/useContactMessages'
-import Pagination from '@/components/common/Pagination.vue'
-import Header from '@/components/common/Header.vue'
-import DeleteModal from '@/components/Dashboard/DeleteModal.vue'
-import { deleteContactMessage, updateContactMessage } from '../../../api/commands/contactMessageCommand'
-import type { ContactMessage } from '../../../types/contact'
+import { ref } from "vue";
+import { useContactMessages } from "../../../composables/useContactMessages";
+import Pagination from "@/components/common/Pagination.vue";
+import Header from "@/components/common/Header.vue";
+import DeleteModal from "@/components/Dashboard/DeleteModal.vue";
+import {
+  deleteContactMessage,
+  updateContactMessage,
+} from "../../../api/commands/contactMessageCommand";
+import type { ContactMessage } from "../../../types/contact";
 
 const {
   loading,
@@ -90,37 +103,39 @@ const {
   totalPages,
   goToPage,
   messages,
-} = useContactMessages()
+} = useContactMessages();
 
-const deleteModalVisible = ref(false)
-const messageToDelete = ref<ContactMessage | null>(null)
+const deleteModalVisible = ref(false);
+const messageToDelete = ref<ContactMessage | null>(null);
 
 // Mark as Read
 async function handleMarkAsRead(id: string | number) {
-  const msg = messages.value.find(m => m.id === id)
-  if (!msg || msg.is_read) return
+  const msg = messages.value.find((m) => m.id === id);
+  if (!msg || msg.is_read) return;
 
-  const updated = await updateContactMessage(id, { is_read: true })
-  if (updated) msg.is_read = true
+  const updated = await updateContactMessage(id, { is_read: true });
+  if (updated) msg.is_read = true;
 }
 
 // Delete message
 function handleRequestDelete(msg: ContactMessage) {
-  messageToDelete.value = msg
-  deleteModalVisible.value = true
+  messageToDelete.value = msg;
+  deleteModalVisible.value = true;
 }
 
 async function confirmDelete() {
-  if (!messageToDelete.value) return
+  if (!messageToDelete.value) return;
 
-  const success = await deleteContactMessage(messageToDelete.value.id)
+  const success = await deleteContactMessage(messageToDelete.value.id);
   if (success) {
-    const index = messages.value.findIndex(m => m.id === messageToDelete.value?.id)
-    if (index !== -1) messages.value.splice(index, 1)
+    const index = messages.value.findIndex(
+      (m) => m.id === messageToDelete.value?.id
+    );
+    if (index !== -1) messages.value.splice(index, 1);
   }
 
-  deleteModalVisible.value = false
-  messageToDelete.value = null
+  deleteModalVisible.value = false;
+  messageToDelete.value = null;
 }
 </script>
 
