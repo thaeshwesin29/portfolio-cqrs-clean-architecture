@@ -68,14 +68,18 @@ class ContactMessageController extends Controller
         return new ContactMessageResource($contactMessage);
     }
 
-    public function destroy(int $id)
-    {
-        $this->commandBus->dispatch(
-            new CrudCommand('ContactMessage', 'delete', ['id' => $id])
-        );
+public function destroy(int $id)
+{
+    // Delete from MySQL
+    $this->commandBus->dispatch(
+        new CrudCommand('ContactMessage', 'delete', ['id' => $id])
+    );
 
-        return response()->json(null, 204);
-    }
+    // Refresh Mongo cache
+    app(\App\Services\ContactMessageCacheService::class)->refreshCache();
+
+    return response()->json(null, 204);
+}
 
     /**
      * Get unread messages count and list (read from Mongo)
