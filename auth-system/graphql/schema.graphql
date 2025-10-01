@@ -1,0 +1,211 @@
+# =====================
+# GraphQL Types
+# =====================
+
+type Education {
+  id: ID!
+  user_id: ID
+  institution: String
+  degree: String
+  location: String
+  start_date: String
+  end_date: String
+  is_current: Boolean
+  details: String
+  created_at: String
+  updated_at: String
+}
+
+type Township {
+  id: ID!
+  name: String!
+  wards: [Ward!]!
+}
+
+type Ward {
+  id: ID!
+  name: String!
+  township_id: ID!
+  township: Township
+  created_at: String
+  updated_at: String
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  township: Township
+  ward: Ward
+  two_factor_enabled: Boolean
+  created_at: String
+  updated_at: String
+}
+
+type Blog {
+  id: ID!
+  title: String!
+  excerpt: String
+  content: String!
+  published_at: String
+  created_at: String
+  updated_at: String
+  user: User
+}
+
+type Technology {
+  id: ID!
+  name: String!
+  slug: String
+  icon: String
+  created_at: String
+  updated_at: String
+}
+
+type Status {
+  id: ID!
+  name: String
+  slug: String
+  created_at: String
+  updated_at: String
+}
+type Technology {
+  id: ID!
+  name: String
+  slug: String
+  icon: String
+  created_at: String
+  updated_at: String
+}
+
+type Project {
+  id: ID!
+  title: String
+  slug: String
+  description: String
+  status: Status
+  start_date: String
+  end_date: String
+  is_featured: Boolean
+  technologies: [Technology]
+  created_at: String
+  updated_at: String
+}
+
+# ✅ New Pagination Wrapper
+type ProjectPagination {
+  data: [Project!]!
+  current: Int!
+  per_page: Int!
+  total: Int!
+  last_page: Int!
+}
+
+input ProjectCreateInput {
+  title: String!
+  description: String
+  status_id: ID
+  technology_ids: [ID!]
+  start_date: String
+  end_date: String
+  is_featured: Boolean
+}
+
+input ProjectUpdateInput {
+  title: String
+  description: String
+  status_id: ID
+  technology_ids: [ID!]
+  start_date: String
+  end_date: String
+  is_featured: Boolean
+}
+
+type Experience {
+  id: ID!
+  user_id: String
+  position: String!
+  company: String!
+  location: String
+  start_date: String
+  end_date: String
+  responsibilities: [String!]
+  created_at: String
+  updated_at: String
+}
+
+type ContactMessage {
+  id: ID!
+  name: String
+  email: String
+  subject: String
+  message: String
+  is_read: Boolean
+  created_at: String
+  updated_at: String
+}
+
+# =====================
+# GraphQL Queries
+# =====================
+
+type Query {
+  townships: [Township!]!
+    @field(resolver: "App\\GraphQL\\Queries\\TownshipQuery@all")
+
+  wards(township_id: ID!): [Ward!]!
+    @field(resolver: "App\\GraphQL\\Queries\\WardQuery@byTownship")
+
+  allWards: [Ward!]!
+    @field(resolver: "App\\GraphQL\\Queries\\WardQuery@all")
+
+  users: [User!]!
+    @field(resolver: "App\\GraphQL\\Queries\\UserQuery@all")
+
+  currentUser: User
+    @field(resolver: "App\\GraphQL\\Queries\\UserQuery@current")
+
+  blogs(limit: Int, search: String): [Blog!]!
+    @field(resolver: "App\\GraphQL\\Queries\\BlogQuery@all")
+
+  blog(id: ID!): Blog
+    @field(resolver: "App\\GraphQL\\Queries\\BlogQuery@find")
+
+  statuses: [Status!]!
+    @field(resolver: "App\\GraphQL\\Queries\\StatusQuery@all")
+
+  status(id: ID!): Status
+    @field(resolver: "App\\GraphQL\\Queries\\StatusQuery@find")
+
+  technologies: [Technology!]! @field(resolver: "App\\GraphQL\\Queries\\TechnologyQuery@all")
+  technology(id: ID!): Technology @field(resolver: "App\\GraphQL\\Queries\\TechnologyQuery@find")
+
+
+  # ✅ Changed to support pagination
+  projects(page: Int, per_page: Int): ProjectPagination!
+    @field(resolver: "App\\GraphQL\\Queries\\ProjectQuery@paginated")
+
+  project(id: ID!): Project
+    @field(resolver: "App\\GraphQL\\Queries\\ProjectQuery@find")
+
+  educations: [Education!]!
+    @field(resolver: "App\\GraphQL\\Queries\\EducationQuery@all")
+
+  education(id: ID!): Education
+    @field(resolver: "App\\GraphQL\\Queries\\EducationQuery@find")
+
+  experiences: [Experience!]!
+    @field(resolver: "App\\GraphQL\\Queries\\ExperienceQuery@all")
+
+  experience(id: ID!): Experience
+  @field(resolver: "App\\GraphQL\\Queries\\ExperienceQuery@find")
+
+  contactMessages: [ContactMessage!]!
+    @field(resolver: "App\\GraphQL\\Queries\\ContactMessageQuery@all")
+
+  contactMessage(id: ID!): ContactMessage
+    @field(resolver: "App\\GraphQL\\Queries\\ContactMessageQuery@find")
+
+  unreadContactMessages: [ContactMessage!]!
+    @field(resolver: "App\\GraphQL\\Queries\\ContactMessageQuery@unread")
+}
