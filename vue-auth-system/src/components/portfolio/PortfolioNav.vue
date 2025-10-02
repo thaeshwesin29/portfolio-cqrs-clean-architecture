@@ -29,7 +29,7 @@
 
           <div class="flex flex-col justify-center">
             <h1 class="text-xl font-bold text-white">
-              Thee Shwe Sin
+              Thae Shwe Sin
             </h1>
             <p class="text-sm text-gray-300">
               Full-Stack Developer

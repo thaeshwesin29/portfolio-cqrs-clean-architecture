@@ -1,4 +1,4 @@
-// src/router/index.ts - Simplified version that only includes existing files
+// src/router/index.ts
 import {
   createRouter,
   createWebHistory,
@@ -21,15 +21,14 @@ interface RouteMetaWithMiddleware {
   layout?: string;
 }
 
-// Simplified route definitions - only include files that exist
+// Routes
 const routes: Array<RouteRecordRaw & { meta?: RouteMetaWithMiddleware }> = [
-  // Root redirect
   {
     path: "/",
     redirect: "/portfolio",
   },
 
-  // Keep your existing routes that work
+  // Public routes
   {
     path: "/home",
     name: "Home",
@@ -118,7 +117,7 @@ const routes: Array<RouteRecordRaw & { meta?: RouteMetaWithMiddleware }> = [
         path: "experience",
         name: "Experience",
         component: () => import("@/pages/Portfolio/ExperienceView.vue"),
-        meta: { title: "Experience - profile5. Thae Shwe Sin" },
+        meta: { title: "Experience - Thae Shwe Sin" },
       },
       {
         path: "site-technologies",
@@ -132,10 +131,20 @@ const routes: Array<RouteRecordRaw & { meta?: RouteMetaWithMiddleware }> = [
         component: () => import("@/pages/Portfolio/HireMeView.vue"),
         meta: { title: "Hire Me - Thae Shwe Sin" },
       },
+
+      // ✅ Search route under portfolio
+      {
+        path: "search",
+        name: "SearchResults",
+        component: () => import("@/pages/Dashboard/Search/SearchView.vue"),
+        meta: { title: "Search Results" },
+      },
+
+
     ],
   },
 
-  // Dashboard routes (protected)
+  // Dashboard routes
   {
     path: "/dashboard",
     component: () => import("@/pages/Dashboard/DashboardLayout.vue"),
@@ -169,56 +178,36 @@ const routes: Array<RouteRecordRaw & { meta?: RouteMetaWithMiddleware }> = [
       {
         path: "education",
         name: "DashboardEducation",
-        component: () =>
-          import("@/pages/Dashboard/Education/EducationList.vue"),
+        component: () => import("@/pages/Dashboard/Education/EducationList.vue"),
         meta: { title: "Manage Education" },
       },
       {
         path: "education/create",
         name: "DashboardEducationCreate",
-        component: () =>
-          import("@/pages/Dashboard/Education/CreateEducation.vue"),
+        component: () => import("@/pages/Dashboard/Education/CreateEducation.vue"),
         meta: { title: "Add Education" },
       },
       {
         path: "education/edit/:id",
         name: "DashboardEducationEdit",
-        component: () =>
-          import("@/pages/Dashboard/Education/EditEducation.vue"),
+        component: () => import("@/pages/Dashboard/Education/EditEducation.vue"),
         meta: { title: "Edit Education" },
       },
-      // src/router/index.ts (excerpt for dashboard/settings)
       {
         path: "experience",
         name: "DashboardExperience",
-        component: () =>
-          import("@/pages/Dashboard/Experience/ExperienceList.vue"),
+        component: () => import("@/pages/Dashboard/Experience/ExperienceList.vue"),
         meta: { title: "Manage Experience" },
       },
       {
         path: "experience/create",
         name: "DashboardExperienceCreate",
-        component: () =>
-          import("@/pages/Dashboard/Experience/ExperienceCreate.vue"),
-      },
-      {
-        path: "/dashboard/settings/change-password",
-        name: "ChangePassword",
-        component: ChangePassword,
-      },
-      // ...other routes
-
-      {
-        path: "/dashboard/settings/information",
-        name: "InformationView",
-        component: () =>
-          import("@/pages/Dashboard/Settings/InformationView.vue"),
+        component: () => import("@/pages/Dashboard/Experience/ExperienceCreate.vue"),
       },
       {
         path: "experience/edit/:id",
         name: "DashboardExperienceEdit",
-        component: () =>
-          import("@/pages/Dashboard/Experience/EditExperience.vue"),
+        component: () => import("@/pages/Dashboard/Experience/EditExperience.vue"),
         meta: { title: "Edit Experience" },
       },
       {
@@ -233,10 +222,16 @@ const routes: Array<RouteRecordRaw & { meta?: RouteMetaWithMiddleware }> = [
         component: () => import("@/pages/Dashboard/Settings/SettingsPage.vue"),
         meta: { title: "Settings" },
       },
+      {
+        path: "settings/change-password",
+        name: "ChangePassword",
+        component: ChangePassword,
+        meta: { title: "Change Password" },
+      },
     ],
   },
 
-  // 404 Not Found - now using the file we just created
+  // 404
   {
     path: "/:pathMatch(.*)*",
     name: "NotFound",
@@ -250,11 +245,8 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL || "/"),
   routes,
   scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
-    } else {
-      return { top: 0 };
-    }
+    if (savedPosition) return savedPosition;
+    return { top: 0 };
   },
 });
 
@@ -265,16 +257,11 @@ router.beforeEach(
     from: RouteLocationNormalized,
     next: NavigationGuardNext
   ) => {
-    // Set page title
-    if (to.meta?.title) {
-      document.title = to.meta.title as string;
-    }
+    if (to.meta?.title) document.title = to.meta.title as string;
 
-    // Apply middlewares
     const middlewareList = to.matched.flatMap(
       (r) => (r.meta as RouteMetaWithMiddleware)?.middlewares || []
     );
-
     if (middlewareList.length > 0) {
       applyMiddleware(middlewareList, to, from, next);
     } else {
@@ -284,6 +271,4 @@ router.beforeEach(
 );
 
 export default router;
-
-// Types export for use in other files
 export type { RouteMetaWithMiddleware };

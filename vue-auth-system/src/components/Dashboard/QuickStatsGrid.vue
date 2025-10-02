@@ -10,8 +10,8 @@
 </template>
 
 <script setup lang="ts">
-import { useDashboardStats } from '@/composables/useDashboardStats'
+// import { useDashboardStats } from '@/composables/useDashboardStats'
 import StatCard from './StatCard.vue'
 
-const { quickStats } = useDashboardStats()
+// const { quickStats } = useDashboardStats()
 </script>

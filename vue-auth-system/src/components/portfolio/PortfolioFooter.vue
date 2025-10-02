@@ -17,7 +17,7 @@
             </div>
             <div class="flex flex-col">
               <h1 class="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors">
-                Thee Shwe Sin
+                Thae Shwe Sin
               </h1>
               <p class="text-xs text-gray-400 group-hover:text-cyan-300 transition-colors">
                 Full-Stack Developer

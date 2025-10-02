@@ -16,21 +16,15 @@ class ProjectRepository extends BaseRepository
      */
     public function createWithRelations(array $data)
     {
-        // dd($data);
         $techIds = $data['technology_ids'] ?? [];
-        // dd($techIds);
         unset($data['technology_ids']);
 
-        // Create project via BaseRepository
         $project = parent::create($data);
 
-        // Sync many-to-many relationship
         if (!empty($techIds)) {
             $this->syncOrDetachRelationship($project, 'technologies', $techIds, true);
         }
-        // dd($project->load('technologies', 'status'));
 
-        // Eager load relationships
         return $project->load('technologies', 'status');
     }
 
@@ -42,28 +36,47 @@ class ProjectRepository extends BaseRepository
         $techIds = $data['technology_ids'] ?? [];
         unset($data['technology_ids']);
 
-        // Update base fields
         $project = parent::update($id, $data);
 
-        // Sync pivot relation
         if (!empty($techIds)) {
             $this->syncOrDetachRelationship($project, 'technologies', $techIds, true);
         }
 
-        // Eager load relations dynamically
         return $project->load('technologies', 'status');
     }
 
     /**
-     * Optional: Fetch projects with all relations (for read model / GraphQL)
+     * Fetch all projects with relations
      */
     public function allWithRelations()
     {
         return Project::with(['technologies', 'status'])->get();
     }
+
+    /**
+     * Find a project by ID with relations
+     */
     public function findWithRelations(int $id)
     {
         return Project::with(['technologies', 'status'])->findOrFail($id);
+    }
+
+    /**
+     * List projects with optional search filter
+     */
+    public function list(array $filters = [])
+    {
+        $query = $this->model->query();
+
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->with(['technologies', 'status'])->get();
     }
 
 }

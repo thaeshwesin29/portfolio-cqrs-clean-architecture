@@ -2,37 +2,42 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Application\Commands\CrudCommand;
-use App\Application\Queries\CrudQuery;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreProjectRequest;
-use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
+use App\Repositories\ProjectRepository;
+use Illuminate\Http\Request;
 use App\Application\Buses\CommandBus;
 use App\Application\Buses\QueryBus;
-use Illuminate\Http\Request;
+use App\Application\Commands\CrudCommand;
+use App\Application\Queries\CrudQuery;
+use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
 
 class ProjectController extends Controller
 {
     protected CommandBus $commandBus;
     protected QueryBus $queryBus;
+    protected ProjectRepository $projectRepository;
 
-    public function __construct(CommandBus $commandBus, QueryBus $queryBus)
+    public function __construct(CommandBus $commandBus, QueryBus $queryBus, ProjectRepository $projectRepository)
     {
         $this->commandBus = $commandBus;
-        $this->queryBus   = $queryBus;
+        $this->queryBus = $queryBus;
+        $this->projectRepository = $projectRepository;
     }
 
     /**
-     * List all projects with optional filters.
+     * List projects with optional search filter.
      */
     public function index(Request $request)
     {
-        $projects = $this->queryBus->dispatch(
-            new CrudQuery('Project', 'list', $request->all())
-        );
+        $filters = [];
 
-        $projects->loadMissing(['technologies', 'status']);
+        if ($request->filled('q')) {
+            $filters['search'] = $request->query('q');
+        }
+
+        $projects = $this->projectRepository->list($filters);
 
         return ProjectResource::collection($projects);
     }
@@ -50,7 +55,7 @@ class ProjectController extends Controller
     }
 
     /**
-     * Show a single project by ID.
+     * Show single project.
      */
     public function show(int $id)
     {
@@ -58,12 +63,7 @@ class ProjectController extends Controller
             new CrudQuery('Project', 'get', ['id' => $id])
         );
 
-        if (! $project) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Project not found'
-            ], 404);
-        }
+        if (!$project) return response()->json(['success' => false, 'message' => 'Project not found'], 404);
 
         $project->loadMissing(['technologies', 'status']);
 
@@ -71,7 +71,7 @@ class ProjectController extends Controller
     }
 
     /**
-     * Update an existing project.
+     * Update project.
      */
     public function update(UpdateProjectRequest $request, int $id)
     {
@@ -85,15 +85,14 @@ class ProjectController extends Controller
     }
 
     /**
-     * Delete a project.
+     * Delete project.
      */
     public function destroy(int $id)
     {
-        // dd($id);
         $this->commandBus->dispatch(
             new CrudCommand('Project', 'delete', ['id' => $id])
         );
 
-        return response()->json(null, 204); // RESTful "No Content"
+        return response()->json(null, 204);
     }
 }

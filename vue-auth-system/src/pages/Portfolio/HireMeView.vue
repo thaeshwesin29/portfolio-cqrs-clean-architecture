@@ -14,93 +14,80 @@
       </div>
 
       <!-- Contact Form -->
-      <form
-        @submit.prevent="submitMessage"
-        class="glass-card p-8 md:p-10 rounded-2xl border border-slate-700/20 relative overflow-hidden"
-      >
-        <!-- Background Pattern -->
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-50"></div>
-        <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -translate-y-16 translate-x-16"></div>
-        <div class="absolute bottom-0 left-0 w-24 h-24 bg-cyan-500/10 rounded-full translate-y-12 -translate-x-12"></div>
-        
-        <div class="relative z-10 space-y-8">
-          <!-- Name & Email Row -->
-          <div class="grid md:grid-cols-2 gap-6 md:gap-8">
-            <div class="space-y-3">
-              <label class="block text-sm font-medium text-gray-300 mb-2">
-                <i class="fas fa-user mr-2 text-blue-400"></i>
-                Your Name
-              </label>
-              <input
-                v-model="form.name"
-                type="text"
-                placeholder="Enter your name"
-                class="form-input w-full px-4 py-3.5 rounded-xl bg-slate-800/30 border border-slate-600/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300"
-                required
-              />
-            </div>
+ <form
+  @submit.prevent="submitMessage"
+  class="glass-card p-6 md:p-8 rounded-2xl border border-slate-700/20 relative overflow-hidden max-w-xl mx-auto"
+>
+  <!-- Background Pattern -->
+  <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-30"></div>
+  <div class="absolute top-0 right-0 w-28 h-28 bg-blue-500/10 rounded-full -translate-y-12 translate-x-12"></div>
+  <div class="absolute bottom-0 left-0 w-20 h-20 bg-cyan-500/10 rounded-full translate-y-10 -translate-x-10"></div>
+  
+  <div class="relative z-10 space-y-5">
+    <!-- Name & Email Row -->
+    <div class="grid md:grid-cols-2 gap-4 md:gap-6">
+      <div class="space-y-1">
+        <label class="block text-sm font-medium text-gray-300">Your Name</label>
+        <input
+          v-model="form.name"
+          type="text"
+          placeholder="Enter your name"
+          class="form-input w-full px-3 py-2.5 rounded-xl bg-slate-800/30 border border-slate-600/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300"
+          required
+        />
+      </div>
 
-            <div class="space-y-3">
-              <label class="block text-sm font-medium text-gray-300 mb-2">
-                <i class="fas fa-envelope mr-2 text-blue-400"></i>
-                Email Address
-              </label>
-              <input
-                v-model="form.email"
-                type="email"
-                placeholder="Enter your email"
-                class="form-input w-full px-4 py-3.5 rounded-xl bg-slate-800/30 border border-slate-600/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300"
-                required
-              />
-            </div>
-          </div>
+      <div class="space-y-1">
+        <label class="block text-sm font-medium text-gray-300">Email Address</label>
+        <input
+          v-model="form.email"
+          type="email"
+          placeholder="Enter your email"
+          class="form-input w-full px-3 py-2.5 rounded-xl bg-slate-800/30 border border-slate-600/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300"
+          required
+        />
+      </div>
+    </div>
 
-          <!-- Subject -->
-          <div class="space-y-3">
-            <label class="block text-sm font-medium text-gray-300 mb-2">
-              <i class="fas fa-tag mr-2 text-blue-400"></i>
-              Subject
-            </label>
-            <input
-              v-model="form.subject"
-              type="text"
-              placeholder="What's this about?"
-              class="form-input w-full px-4 py-3.5 rounded-xl bg-slate-800/30 border border-slate-600/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300"
-            />
-          </div>
+    <!-- Subject -->
+    <div class="space-y-1">
+      <label class="block text-sm font-medium text-gray-300">Subject</label>
+      <input
+        v-model="form.subject"
+        type="text"
+        placeholder="What's this about?"
+        class="form-input w-full px-3 py-2.5 rounded-xl bg-slate-800/30 border border-slate-600/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300"
+      />
+    </div>
 
-          <!-- Message -->
-          <div class="space-y-3">
-            <label class="block text-sm font-medium text-gray-300 mb-2">
-              <i class="fas fa-comment mr-2 text-blue-400"></i>
-              Message
-            </label>
-            <textarea
-              v-model="form.message"
-              rows="6"
-              placeholder="Tell me about your project..."
-              class="form-input w-full px-4 py-3.5 rounded-xl bg-slate-800/30 border border-slate-600/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 resize-none"
-              required
-            ></textarea>
-          </div>
+    <!-- Message -->
+    <div class="space-y-1">
+      <label class="block text-sm font-medium text-gray-300">Message</label>
+      <textarea
+        v-model="form.message"
+        rows="5"
+        placeholder="Tell me about your project..."
+        class="form-input w-full px-3 py-2.5 rounded-xl bg-slate-800/30 border border-slate-600/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 resize-none"
+        required
+      ></textarea>
+    </div>
 
-          <!-- Submit Button -->
-          <button
-            type="submit"
-            :disabled="loading"
-            class="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none group mt-4"
-          >
-            <span v-if="loading" class="flex items-center justify-center gap-3">
-              <i class="fas fa-spinner fa-spin"></i>
-              Sending Message...
-            </span>
-            <span v-else class="flex items-center justify-center gap-3">
-              <i class="fas fa-paper-plane group-hover:translate-x-1 transition-transform duration-300"></i>
-              Send Message
-            </span>
-          </button>
-        </div>
-      </form>
+    <!-- Submit Button -->
+    <button
+      type="submit"
+      :disabled="loading"
+      class="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+    >
+      <span v-if="loading" class="flex items-center justify-center gap-2">
+        Sending Message...
+      </span>
+      <span v-else class="flex items-center justify-center gap-2">
+        Send Message
+      </span>
+    </button>
+  </div>
+</form>
+
 
       <!-- Quick Contact Info -->
       <!-- <div class="mt-12 text-center">

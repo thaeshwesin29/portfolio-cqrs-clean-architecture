@@ -71,8 +71,8 @@
           <p
             class="text-lg md:text-xl text-gray-300 leading-relaxed max-w-2xl animate-slide-up animation-delay-500"
           >
-            Crafting scalable, user-focused applications with clean architecture &
-            modern technologies. Currently at ITVisionHub in
+            Crafting scalable, user-focused applications with clean architecture
+            & modern technologies. Currently at ITVisionHub in
             <span
               v-if="userStore.loading"
               class="h-6 w-32 bg-gradient-to-r from-gray-700 to-gray-600 animate-pulse inline-block rounded"
@@ -203,8 +203,11 @@ const socialLinks = [
   { url: "mailto:thaeshwesin2000@gmail.com", icon: "mail", title: "Email" },
   { url: "https://t.me/YourTelegram", icon: "telegram", title: "Telegram" },
   { url: "https://twitter.com/YourTwitter", icon: "twitter", title: "Twitter" },
-  { url: "https://www.facebook.com/YourFacebook", icon: "facebook", title: "Facebook" }, // <-- Added
-
+  {
+    url: "https://www.facebook.com/YourFacebook",
+    icon: "facebook",
+    title: "Facebook",
+  }, // <-- Added
 ];
 </script>
 
@@ -239,37 +242,90 @@ const socialLinks = [
   }
 }
 @keyframes float1 {
-  0%, 100% { transform: translateY(0px) translateX(0px); }
-  50% { transform: translateY(-20px) translateX(10px); }
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(-20px) translateX(10px);
+  }
 }
 @keyframes float2 {
-  0%, 100% { transform: translateY(0px) translateX(0px); }
-  50% { transform: translateY(-15px) translateX(-15px); }
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(-15px) translateX(-15px);
+  }
 }
 @keyframes float3 {
-  0%, 100% { transform: translateY(0px) translateX(0px); }
-  50% { transform: translateY(-25px) translateX(5px); }
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(-25px) translateX(5px);
+  }
 }
 @keyframes floatProfile {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 @keyframes pulseSlow {
-  0%, 100% { opacity: 0.1; }
-  50% { opacity: 0.2; }
+  0%,
+  100% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.2;
+  }
 }
-.animate-slide-up { animation: slideUp 0.8s ease-out forwards; }
-.animate-fade-in { animation: fadeIn 1s ease-out forwards; }
-.animate-name-reveal { animation: nameReveal 1s ease-out forwards; }
-.animate-float-1 { animation: float1 6s ease-in-out infinite; }
-.animate-float-2 { animation: float2 8s ease-in-out infinite; }
-.animate-float-3 { animation: float3 7s ease-in-out infinite; }
-.animate-float-profile { animation: floatProfile 4s ease-in-out infinite; }
-.animate-pulse-slow { animation: pulseSlow 4s ease-in-out infinite; }
-.animation-delay-300 { animation-delay: 0.3s; }
-.animation-delay-500 { animation-delay: 0.5s; }
-.animation-delay-700 { animation-delay: 0.7s; }
-.animation-delay-900 { animation-delay: 0.9s; }
-.animation-delay-1000 { animation-delay: 1s; }
-.animation-delay-2000 { animation-delay: 2s; }
+.animate-slide-up {
+  animation: slideUp 0.8s ease-out forwards;
+}
+.animate-fade-in {
+  animation: fadeIn 1s ease-out forwards;
+}
+.animate-name-reveal {
+  animation: nameReveal 1s ease-out forwards;
+}
+.animate-float-1 {
+  animation: float1 6s ease-in-out infinite;
+}
+.animate-float-2 {
+  animation: float2 8s ease-in-out infinite;
+}
+.animate-float-3 {
+  animation: float3 7s ease-in-out infinite;
+}
+.animate-float-profile {
+  animation: floatProfile 4s ease-in-out infinite;
+}
+.animate-pulse-slow {
+  animation: pulseSlow 4s ease-in-out infinite;
+}
+.animation-delay-300 {
+  animation-delay: 0.3s;
+}
+.animation-delay-500 {
+  animation-delay: 0.5s;
+}
+.animation-delay-700 {
+  animation-delay: 0.7s;
+}
+.animation-delay-900 {
+  animation-delay: 0.9s;
+}
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
 </style>

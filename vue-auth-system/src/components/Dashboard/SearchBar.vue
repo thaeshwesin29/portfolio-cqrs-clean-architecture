@@ -1,28 +1,34 @@
 <template>
-  <div class="relative hidden md:block">
+  <div class="flex items-center space-x-2">
     <input
       v-model="searchQuery"
+      @keyup.enter="handleSearch"
       type="text"
       placeholder="Search..."
-      class="w-64 px-4 py-2 pl-10 bg-gray-100 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl 
-      text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 
-      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-      @keydown.enter="handleSearch"
+      class="border rounded px-3 py-2 flex-1 focus:outline-none focus:ring focus:border-indigo-500"
     />
-    <MagnifyingGlassIcon class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+    <button
+      @click="handleSearch"
+      class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+    >
+      Search
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
+import { ref, defineEmits } from "vue";
 
-const searchQuery = ref('')
+const searchQuery = ref("");
+const emit = defineEmits<{
+  (e: "search", query: string): void;
+}>();
 
 const handleSearch = () => {
-  if (searchQuery.value.trim()) {
-    // Implement search functionality
-    console.log('Searching for:', searchQuery.value)
-  }
-}
+  emit("search", searchQuery.value.trim());
+};
 </script>
+
+<style scoped>
+/* Optional custom styling */
+</style>

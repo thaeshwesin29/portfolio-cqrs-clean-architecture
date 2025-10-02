@@ -12,9 +12,30 @@
         </p>
       </div>
 
+      <!-- Full-page Loading -->
+      <div v-if="loading" class="text-center py-20">
+        <p class="text-gray-400 text-lg">Loading education records...</p>
+      </div>
+
+      <!-- Error -->
+      <div v-else-if="error" class="text-center py-20">
+        <p class="text-red-400 text-lg">{{ error }}</p>
+        <button
+          @click="fetchEducationsOnce"
+          class="mt-6 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
+
+      <!-- Empty -->
+      <div v-else-if="educations.length === 0" class="text-center py-20">
+        <p class="text-slate-400 text-lg">No education records available yet</p>
+      </div>
+
       <!-- Cards Grid -->
-      <div class="grid lg:grid-cols-3 gap-8">
-        <div v-for="(edu, index) in educations" :key="index"
+      <div v-else class="grid lg:grid-cols-3 gap-8">
+        <div v-for="edu in educations" :key="edu.id"
              class="glass-card p-6 rounded-3xl border border-gray-700/20 hover:scale-105 transition-transform duration-300 relative overflow-hidden group">
           
           <!-- Gradient Accent -->
@@ -23,12 +44,13 @@
           <!-- Content -->
           <div class="relative z-10 space-y-4">
             <div class="flex justify-between items-center">
-              <span class="text-sm text-gray-400">{{ edu.period }}</span>
-              <span class="text-xs text-gray-500 uppercase">{{ edu.type }}</span>
+              <span class="text-sm text-gray-400">{{ formatPeriod(edu.start_date, edu.end_date) }}</span>
+              <span class="text-xs text-gray-500 uppercase">{{ edu.type || 'Education' }}</span>
             </div>
-            <h3 class="text-xl font-semibold text-white">{{ edu.title }}</h3>
+            <h3 class="text-xl font-semibold text-white">{{ edu.degree }}</h3>
             <h4 class="text-gray-300 font-medium">{{ edu.institution }}</h4>
             <p class="text-gray-400 text-sm leading-relaxed">{{ edu.details }}</p>
+            <div v-if="edu.location" class="text-indigo-400 text-sm">📍 {{ edu.location }}</div>
           </div>
 
           <!-- Decorative Dots -->
@@ -49,29 +71,23 @@
 </template>
 
 <script setup lang="ts">
-const educations = [
-  {
-    period: '2017 – 2024',
-    type: 'Education',
-    title: 'B.C.Sc in Computer Science',
-    institution: 'University of Computer Studies, Myanmar',
-    details: 'Studied full-stack development, algorithms, and software architecture.',
-  },
-  {
-    period: '2018',
-    type: 'Volunteer',
-    title: 'Myanmar IT-Camp',
-    institution: 'Myanmar Volunteer Program',
-    details: 'Mentored junior developers and participated in coding workshops.',
-  },
-  {
-    period: '2023 – Present',
-    type: 'Work',
-    title: 'Full-Stack Developer',
-    institution: 'ITVisionHub',
-    details: 'Building scalable systems using Laravel, Vue.js, and modern architectures.',
-  },
-];
+import { onMounted, computed } from "vue";
+import { educationStore, fetchEducationsOnce } from "@/stores/educationStore";
+
+// Reactive store
+const educations = computed(() => educationStore.educations);
+const loading = computed(() => educationStore.loading);
+const error = computed(() => educationStore.error);
+
+// Fetch real data on mount
+onMounted(fetchEducationsOnce);
+
+// Helper to format start/end dates
+const formatPeriod = (start?: string, end?: string) => {
+  const startYear = start ? new Date(start).getFullYear() : "";
+  const endYear = end ? new Date(end).getFullYear() : "";
+  return startYear && endYear ? `${startYear} – ${endYear}` : startYear || endYear || "";
+};
 </script>
 
 <style scoped>
