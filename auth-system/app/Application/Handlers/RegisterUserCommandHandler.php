@@ -1,12 +1,11 @@
 <?php
 
-// app/Application/Handlers/RegisterUserHandler.php
 namespace App\Application\Handlers;
 
 use App\Application\Commands\RegisterUserCommand;
 use App\Services\UserService;
 
-class RegisterUserHandler
+class RegisterUserCommandHandler
 {
     protected UserService $userService;
 
@@ -20,6 +19,7 @@ class RegisterUserHandler
         return $this->userService->register($command->data);
     }
 }
+
 
 // app/Application/Handlers/GetUserProfileHandler.php
 // namespace App\Application\Handlers;

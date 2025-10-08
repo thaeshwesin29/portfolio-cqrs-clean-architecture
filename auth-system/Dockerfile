@@ -26,28 +26,34 @@ RUN composer config --global process-timeout 2000
 # -----------------------
 # Set working directory
 # -----------------------
-WORKDIR /var/www
+WORKDIR /var/www/html/thaeshwezin/auth-system
 
 # -----------------------
-# Copy composer files first for caching
+# Copy only composer files first for caching
 # -----------------------
 COPY composer.json composer.lock ./
 
 # -----------------------
-# Install PHP dependencies
+# Install PHP dependencies but skip scripts temporarily
 # -----------------------
-RUN composer install --no-interaction --prefer-dist --ignore-platform-reqs --optimize-autoloader
+RUN composer install --no-interaction --prefer-dist --ignore-platform-reqs --optimize-autoloader --no-scripts
 
 # -----------------------
 # Copy the rest of the application
 # -----------------------
-COPY . /var/www
+COPY . /var/www/html/thaeshwezin/auth-system
+
+# -----------------------
+# Run artisan scripts now that artisan exists
+# -----------------------
+# RUN composer dump-autoload --optimize \
+#     && php artisan package:discover
 
 # -----------------------
 # Set permissions
 # -----------------------
-RUN chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/storage
+RUN chown -R www-data:www-data /var/www/html/thaeshwezin/auth-system \
+    && chmod -R 755 /var/www/html/thaeshwezin/auth-system/storage
 
 # -----------------------
 # Expose port and start PHP-FPM

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Cache;
 use App\Repositories\ProjectRepository;
 
 class ProjectCacheService extends MongoCacheService
@@ -14,16 +15,19 @@ class ProjectCacheService extends MongoCacheService
         $this->projectRepo = $projectRepo;
     }
 
-    public function fetchAll(): array
+    public function refreshCache(): void
     {
+        // Only fetch updated projects since last sync
+        $lastSync = Cache::get('projects_last_sync', now()->subDay());
         $projects = $this->projectRepo->allWithRelations()
-            ->filter(fn($p) => empty($p['deleted_at']));
+            ->filter(fn($p) => empty($p['deleted_at']) || $p['updated_at'] > $lastSync);
 
-        $mapped = $projects->map(fn($project) => $this->mapDocument($project))->toArray();
+        $mapped = $projects->map(fn($p) => $this->mapDocument($p))->toArray();
 
-        $this->storeInMongo($mapped);
-
-        return $mapped;
+        if (!empty($mapped)) {
+            $this->storeInMongo($mapped);
+            Cache::put('projects_last_sync', now());
+        }
     }
 
     protected function mapDocument($project): array
@@ -34,9 +38,7 @@ class ProjectCacheService extends MongoCacheService
 
         $technologies = [];
         foreach ($project['technologies'] ?? [] as $tech) {
-            if ($tech instanceof \Illuminate\Database\Eloquent\Model) {
-                $tech = $tech->toArray();
-            }
+            $tech = $tech instanceof \Illuminate\Database\Eloquent\Model ? $tech->toArray() : $tech;
             $technologies[] = [
                 'id' => $tech['id'] ?? null,
                 'name' => $tech['name'] ?? null,
@@ -49,12 +51,10 @@ class ProjectCacheService extends MongoCacheService
 
         $status = null;
         if (!empty($project['status'])) {
-            if ($project['status'] instanceof \Illuminate\Database\Eloquent\Model) {
-                $project['status'] = $project['status']->toArray();
-            }
+            $status = $project['status'] instanceof \Illuminate\Database\Eloquent\Model ? $project['status']->toArray() : $project['status'];
             $status = [
-                'id' => $project['status']['id'] ?? null,
-                'name' => $project['status']['name'] ?? null,
+                'id' => $status['id'] ?? null,
+                'name' => $status['name'] ?? null,
             ];
         }
 
@@ -73,25 +73,23 @@ class ProjectCacheService extends MongoCacheService
         ];
     }
 
-    public function refreshCache(): void
-    {
-        $this->fetchAll();
-    }
-
-    protected function storeInMongo(array $projects)
+    protected function storeInMongo(array $projects): void
     {
         $collection = $this->getCollection();
+        $bulk = [];
 
-        $idsToKeep = array_column($projects, 'id');
+        foreach ($projects as $p) {
+            $bulk[] = [
+                'replaceOne' => [
+                    ['id' => $p['id']],
+                    $p,
+                    ['upsert' => true]
+                ]
+            ];
+        }
 
-        $collection->deleteMany(['id' => ['$nin' => $idsToKeep]]);
-
-        foreach ($projects as $project) {
-            $collection->replaceOne(
-                ['id' => $project['id']],
-                $project,
-                ['upsert' => true]
-            );
+        if (!empty($bulk)) {
+            $collection->bulkWrite($bulk);
         }
     }
 }

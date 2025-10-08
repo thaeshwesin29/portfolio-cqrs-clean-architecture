@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
 use MongoDB\Client;
+use MongoDB\Driver\BulkWrite;
 
 abstract class MongoCacheService
 {
@@ -16,6 +17,9 @@ abstract class MongoCacheService
         $this->collectionName = $collectionName;
     }
 
+    /**
+     * Get Mongo collection instance
+     */
     protected function getCollection()
     {
         return $this->mongo
@@ -26,40 +30,44 @@ abstract class MongoCacheService
     /**
      * Paginate documents from MongoDB
      */
-    // app/Services/MongoCacheService.php
+    public function paginate(int $page = 1, int $perPage = 10): array
+    {
+        $skip = ($page - 1) * $perPage;
+        $collection = $this->getCollection();
 
-public function paginate(int $page = 1, int $perPage = 10): array
-{
-    $skip = ($page - 1) * $perPage;
-    $collection = $this->getCollection();
+        // Only fetch necessary fields if possible
+        $cursor = $collection->find(
+            [],
+            [
+                'skip' => $skip,
+                'limit' => $perPage,
+                'sort' => ['created_at' => -1],
+            ]
+        );
 
-    $cursor = $collection->find(
-        [],
-        ['skip' => $skip, 'limit' => $perPage, 'sort' => ['created_at' => -1]]
-    );
+        $items = iterator_to_array($cursor, false);
+        $total = $collection->countDocuments();
+        $lastPage = (int) ceil($total / $perPage);
 
-    $items = iterator_to_array($cursor, false);
-
-    $total = $collection->countDocuments();
-    $lastPage = (int) ceil($total / $perPage);
-
-    return [
-        'data'      => array_map([$this, 'mapDocument'], $items),
-        'current'   => $page,
-        'per_page'  => $perPage,
-        'total'     => $total,
-        'last_page' => $lastPage,
-    ];
-}
-
+        return [
+            'data'      => array_map([$this, 'mapDocument'], $items),
+            'current'   => $page,
+            'per_page'  => $perPage,
+            'total'     => $total,
+            'last_page' => $lastPage,
+        ];
+    }
 
     /**
-     * Fetch all (use carefully for small datasets)
+     * Fetch all documents (use for small datasets)
      */
     public function fetchAll(): array
     {
         return Cache::remember("{$this->collectionName}_all", now()->addMinutes(10), function () {
-            $cursor = $this->getCollection()->find([], ['sort' => ['created_at' => -1]]);
+            $collection = $this->getCollection();
+
+            // Fetch all documents sorted by created_at
+            $cursor = $collection->find([], ['sort' => ['created_at' => -1]]);
             $docs = iterator_to_array($cursor, false);
 
             return array_map([$this, 'mapDocument'], $docs);
@@ -67,19 +75,16 @@ public function paginate(int $page = 1, int $perPage = 10): array
     }
 
     /**
-     * Refresh all cache entries
+     * Refresh cache manually
      */
     public function refreshCache(): void
     {
-        // Forget all keys (all + paginated)
         Cache::forget("{$this->collectionName}_all");
-
-        // Optional: clear paginated caches too
-        // (if you use tagged cache, easier)
+        $this->fetchAll(); // Rebuild cache
     }
 
     /**
-     * Find one by id
+     * Find a document by id
      */
     public function find(string|int $id): ?array
     {
@@ -88,7 +93,33 @@ public function paginate(int $page = 1, int $perPage = 10): array
     }
 
     /**
-     * Every service must define mapping
+     * Upsert multiple documents into Mongo (bulk operation)
+     * This improves performance for large datasets
+     */
+    protected function storeInMongo(array $items): void
+    {
+        if (empty($items)) return;
+
+        $collection = $this->getCollection();
+        $bulkOps = [];
+
+        foreach ($items as $item) {
+            $bulkOps[] = [
+                'replaceOne' => [
+                    ['id' => $item['id']],
+                    $item,
+                    ['upsert' => true]
+                ]
+            ];
+        }
+
+        if (!empty($bulkOps)) {
+            $collection->bulkWrite($bulkOps);
+        }
+    }
+
+    /**
+     * Every child service must implement mapping logic
      */
     abstract protected function mapDocument($doc): array;
 }
