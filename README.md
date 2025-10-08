@@ -132,4 +132,4 @@ Create a new feature branch.
 
 Submit a Pull Request (PR).
 
-A solid foundation for building next-generation, enterprise-ready full-stack a
+
