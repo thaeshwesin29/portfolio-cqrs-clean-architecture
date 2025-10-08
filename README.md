@@ -1,161 +1,135 @@
+📌 Portfolio CQRS Clean Architecture
 
-# 📌 Portfolio CQRS Clean Architecture
+A full-stack portfolio management system built with Laravel (CQRS + Event-Driven Architecture), Vue 3 (Vite), and Docker.
+This project demonstrates a scalable, clean, and maintainable architecture featuring CQRS, Event Sourcing, and Real-time UI updates — ideal for modern enterprise-level applications.
 
-A **full-stack portfolio application** built with **Laravel (CQRS architecture)**, **Vue 3 (Vite)**, and **Docker**.
-This project demonstrates **scalable clean architecture** with **CQRS, Event Sourcing, and Real-time UI updates** — ideal for enterprise-level applications.
+🚀 Features
 
----
+⚙️ CQRS Pattern – Separation of Write (MySQL) and Read (MongoDB) models.
 
-## 🚀 Features
+🔔 Event-Driven Architecture – Powered by RabbitMQ for asynchronous communication.
 
-* **CQRS Pattern** – Separation of Write (MySQL) and Read (MongoDB) models.
-* **Event-driven Architecture** – RabbitMQ for event publishing and consumption.
-* **Real-time UI** – Vue frontend updates instantly via Laravel Echo.
-* **Clean Code & DRY** – Domain-driven structure with clear separation of concerns.
-* **Dockerized Setup** – One command to spin up Laravel, Vue, MySQL, MongoDB, RabbitMQ, and phpMyAdmin.
-* **Authentication** – JWT-based auth with login, register, and profile management.
-* **Portfolio Module** – Manage projects with CRUD, statuses, and featured items.
+⚡ Real-time Frontend – Vue updates instantly through Laravel Echo broadcasts.
 
----
+🧩 Clean Codebase – Domain-Driven, SOLID, and DRY principles applied throughout.
 
-## 🛠️ Tech Stack
+🐳 Dockerized Stack – One command to spin up all services: Laravel, Vue, MySQL, MongoDB, RabbitMQ, and phpMyAdmin.
 
-* **Backend:** Laravel 10 (PHP-FPM)
-* **Frontend:** Vue 3 + Vite
-* **Database (Write):** MySQL 8
-* **Database (Read):** MongoDB 6
-* **Message Broker:** RabbitMQ 3 (with management UI)
-* **Queue Worker:** Laravel Queue Worker (domain-events, default)
-* **Proxy:** Nginx (reverse proxy for Laravel API + GraphQL)
-* **Admin Tool:** phpMyAdmin
+🔐 JWT Authentication – Secure register, login, logout, and profile management.
 
----
+💼 Portfolio Module – Manage projects with CRUD operations, statuses, and featured flags.
 
-## 📂 Architecture Overview
-
-```
-vue-testing-project/
+🛠️ Tech Stack
+Layer	Technology
+Backend	Laravel 10 (PHP-FPM)
+Frontend	Vue 3 + Vite + TailwindCSS
+Database (Write)	MySQL 8
+Database (Read)	MongoDB 6
+Message Broker	RabbitMQ 3 (with management UI)
+Queue Worker	Laravel Queue Worker (domain-events, default)
+Reverse Proxy	Nginx
+Admin Tool	phpMyAdmin
+📂 Architecture Overview
+portfolio-cqrs-clean-architecture/
 │
-├── auth-system/ # Laravel backend (CQRS + API + Events)
-│ ├── app/ # Domain, Application, Infrastructure code
-│ ├── config/ # Laravel configuration
-│ ├── graphql/ # GraphQL schemas
-│ ├── routes/ # API + GraphQL routes
-│ └── .env # Backend environment variables
+├── auth-system/              # Laravel backend (CQRS + API + Events)
+│   ├── app/                  # Domain, Application, Infrastructure layers
+│   ├── config/               # Laravel configuration
+│   ├── graphql/              # GraphQL schemas
+│   ├── routes/               # API + GraphQL routes
+│   └── .env                  # Backend environment variables
 │
-├── vue-auth-system/ # Vue 3 frontend (Vite + Tailwind + Auth)
-│ ├── src/ # Components, pages, stores
-│ ├── tests/ # Unit tests
-│ └── .env # Frontend environment variables
+├── vue-auth-system/          # Vue 3 frontend (Vite + Tailwind + Auth)
+│   ├── src/                  # Components, pages, stores
+│   ├── tests/                # Unit & integration tests
+│   └── .env                  # Frontend environment variables
 │
-├── nginx/ # Nginx reverse proxy config
-│ └── default.conf
+├── nginx/                    # Nginx reverse proxy configuration
+│   └── default.conf
 │
-├── docker-compose.yml # Main Docker configuration
-└── README.md # Project documentation
-```
+├── docker-compose.yml        # Main Docker stack configuration
+└── README.md                 # Project documentation
 
-✅ Ensures **eventual consistency**, **real-time UI updates**, and **CQRS separation**.
 
----
+✅ Provides eventual consistency, real-time synchronization, and clean modular separation.
 
-## 🐳 Docker Setup
-
-### 1. Clone the repositories
-
-```bash
-git clone https://github.com/kayzinkhaing/portfolio-cqrs-clean-architecture.git
+🐳 Docker Setup
+1️⃣ Clone the Repository
+git clone https://github.com/thaeshwesin29/portfolio-cqrs-clean-architecture.git
 cd portfolio-cqrs-clean-architecture
-```
 
-### 2. Environment variables
-
-Copy `.env.example` files for both **backend** and **frontend**:
-
-```bash
+2️⃣ Copy Environment Variables
 cp auth-system/.env.example auth-system/.env
 cp vue-auth-system/.env.example vue-auth-system/.env
-```
 
-### 3. Start the stack
-
-```bash
+3️⃣ Start the Docker Stack
 docker compose up --build -d
-```
 
-### 4. Services exposed
+🌐 Exposed Services
+Service	URL	Description
+Laravel API	http://localhost:81
+	Backend (API + GraphQL)
+Vue Frontend	http://localhost:5174
+	Vite Dev Server
+phpMyAdmin	http://localhost:8083
+	Manage MySQL Database
+RabbitMQ UI	http://localhost:15673
+	RabbitMQ Dashboard (guest/guest)
+MongoDB	localhost:27017	Read Model Storage
+MySQL	localhost:3308	Write Model Storage
+Nginx	Ports 81 and 443	Reverse Proxy for Backend + Frontend
+🔄 Data Flow Overview
 
-| Service      | URL                                              | Notes                   |
-| ------------ | ------------------------------------------------ | ----------------------- |
-| Laravel API  | [http://localhost:8000](http://localhost:8000)   | Backend + GraphQL       |
-| Vue Frontend | [http://localhost:5173](http://localhost:5173)   | Vite dev server         |
-| phpMyAdmin   | [http://localhost:8081](http://localhost:8081)   | Manage MySQL            |
-| RabbitMQ UI  | [http://localhost:15672](http://localhost:15672) | Guest / Guest (default) |
-| MongoDB      | localhost:27017                                  | Read model storage      |
-| MySQL        | localhost:3307                                   | Write model storage     |
+Write Operation → Data written to MySQL (Write Model).
 
----
+Domain Event → ModelChanged event dispatched.
 
-## 🔄 Flow Summary
+RabbitMQ → Publishes event to the broker.
 
-1. **MySQL (Write)** → Data written via CRUD service.
-2. **Event Raised** → `ModelChanged` event dispatched.
-3. **RabbitMQ** → Listener publishes event into message broker.
-4. **Worker Job** → Consumes event, syncs into **MongoDB (Read)**.
-5. **Broadcast** → Job fires `ModelChangedBroadcast` → via Echo.
-6. **Vue Frontend** → Reacts in **real-time**, updating UI instantly.
+Worker → Listens and syncs data to MongoDB (Read Model).
 
-✅ Includes retries & error handling:
+Broadcast → Triggers ModelChangedBroadcast via Laravel Echo.
 
-* Laravel Worker: automatic retries with RabbitMQ.
-* Vue Frontend: API retries on network failures.
+Vue Frontend → Reacts instantly and updates UI in real time.
 
----
+✅ Includes automatic retries, error handling, and eventual consistency between services.
 
-## 📖 Project Modules
+📦 Core Modules
 
-* **Portfolio**: CRUD for projects (title, description, status, dates, featured flag).
-* **Auth**: Register, login, logout, JWT-based authentication.
-* **Real-time UI**: Project changes reflected instantly across sessions.
+Portfolio – CRUD for project management (title, description, status, featured).
 
----
+Auth – Register, login, logout, JWT-based auth.
 
-## 🏗️ Clean Code Practices
+Real-Time UI – Instant updates across all user sessions.
 
-* **CQRS** – Commands for write operations, Queries for read operations.
-* **SOLID Principles** – Single-responsibility services, dependency injection.
-* **DRY** – Shared logic extracted into reusable services.
-* **Event-driven** – RabbitMQ ensures decoupling and scalability.
-* **Testing** – Unit & integration tests for core modules.
+🧠 Clean Architecture Principles
 
----
+🧱 CQRS – Commands handle writes; Queries handle reads.
 
-## 🚀 Quick Demo Commands
+🧩 SOLID – Single Responsibility, Dependency Injection, and Clean Abstractions.
 
-### Run migrations
+🔁 DRY – Reusable shared services across modules.
 
-```bash
-docker exec -it laravel php artisan migrate:fresh --seed
-```
+🔔 Event-Driven – RabbitMQ for decoupled asynchronous workflows.
 
-### Run queue worker (already running in container)
+🧪 Testing – Unit & Integration tests for core modules.
 
-```bash
-docker logs -f laravel-worker
-```
+⚡ Developer Commands
+Run Migrations + Seed
+docker exec -it docker-stack-laravel-1 php artisan migrate:fresh --seed
 
-### Access Tinker
+View Worker Logs
+docker logs -f docker-stack-laravel-worker-1
 
-```bash
-docker exec -it laravel-backend php artisan tinker
-```
+Access Laravel Tinker
+docker exec -it docker-stack-laravel-1 php artisan tinker
 
----
+🤝 Contributing
 
-## 🤝 Contributing
+Fork this repository.
 
-1. Fork this repo.
-2. Create a new feature branch.
-3. Submit a PR.
+Create a new feature branch.
 
+Submit a Pull Request (PR).
 
+A solid foundation for building next-generation, enterprise-ready full-stack a
