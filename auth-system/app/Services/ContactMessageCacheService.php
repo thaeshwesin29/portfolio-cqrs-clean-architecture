@@ -86,7 +86,7 @@ class ContactMessageCacheService extends MongoCacheService
     /**
      * Store messages in Mongo and remove stale documents
      */
-    protected function storeInMongo(array $messages)
+    protected function storeInMongo(array $messages): void
     {
         $collection = $this->getCollection();
         $idsToKeep = array_column($messages, 'id');

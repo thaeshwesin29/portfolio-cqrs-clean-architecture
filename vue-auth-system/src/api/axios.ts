@@ -6,7 +6,7 @@ import { ROUTES } from './routes'
 // Public API (no cookies)
 // -------------------------
 export const publicApi = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:81/api',
   withCredentials: false,
 })
 
@@ -14,15 +14,15 @@ export const publicApi = axios.create({
 // Authenticated API (cookies + bearer token)
 // -------------------------
 export const commandApi = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
-  withCredentials: true, // ✅ cookies included
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:81/api',
+  withCredentials: true, // ✅ cookies included for Sanctum
 })
 
 // -------------------------
-// Query API (optional GraphQL)
+// Query API (GraphQL)
 // -------------------------
 export const queryApi: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_GRAPHQL_URL || 'http://localhost:8000/graphql',
+  baseURL: import.meta.env.VITE_GRAPHQL_URL || 'http://localhost:81/graphql',
   withCredentials: true,
 })
 
@@ -30,7 +30,7 @@ export const queryApi: AxiosInstance = axios.create({
 // CSRF helper
 // -------------------------
 export const getCsrfCookie = (): Promise<AxiosResponse> => {
-  const base = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
+  const base = import.meta.env.VITE_API_BASE || 'http://localhost:81'
   return axios.get(`${base}${ROUTES.csrf}`, { withCredentials: true })
 }
 
@@ -51,4 +51,11 @@ export const withCsrf = async <T>(
 ): Promise<AxiosResponse<T>> => {
   await getCsrfCookie()
   return requestFn()
+}
+
+// -------------------------
+// Example Login Request
+// -------------------------
+export const loginUser = async (data: { email: string; password: string }) => {
+  return withCsrf(() => commandApi.post('/login', data))
 }

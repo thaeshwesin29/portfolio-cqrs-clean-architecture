@@ -1,11 +1,6 @@
-/* C:\xampp\htdocs\vue-testing-project\vue-auth-system\src\assets\main.css */
-
-/* @import 'tailwindcss/base';
+ @import 'tailwindcss/base';
 @import 'tailwindcss/components';
-@import 'tailwindcss/utilities'; */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/utilities'; 
 
 /* CSS Custom Properties for Design System */
 :root {

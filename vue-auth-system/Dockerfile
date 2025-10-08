@@ -12,7 +12,7 @@ RUN npm install laravel-echo pusher-js
 COPY . .
 
 # Expose Vite dev server port
-EXPOSE 5173
+EXPOSE 5174
 
 # Start Vite dev server, accessible externally
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

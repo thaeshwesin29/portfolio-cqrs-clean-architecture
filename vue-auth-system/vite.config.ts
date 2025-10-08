@@ -12,6 +12,16 @@ export default defineConfig(({ mode }) => {
       tsconfigPaths(),
     ],
 
+    // make Vite use our PostCSS config and keep CSS modules only for *.module.*
+    css: {
+      postcss: './postcss.config.cjs',
+      modules: {
+        // default behavior: treat only *.module.* files as CSS modules
+        scopeBehaviour: 'local',
+        generateScopedName: isProduction ? '[hash:base64:8]' : '[name]__[local]__[hash:base64:5]',
+      },
+    },
+
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
@@ -26,7 +36,7 @@ export default defineConfig(({ mode }) => {
     },
 
     server: {
-      port: 5173,
+      port: 5174,
       open: true,
       strictPort: true,
       hmr: { overlay: true },
@@ -57,7 +67,7 @@ export default defineConfig(({ mode }) => {
     test: {
       globals: true,
       environment: 'jsdom',
-      setupFiles: './tests/setup.ts', // setup for global mocks
+      setupFiles: './tests/setup.ts',
       include: ['src/**/*.{test,spec}.{ts,tsx}'],
       coverage: {
         provider: 'v8',
