@@ -28,8 +28,8 @@
           <br />
         </h2>
         <p class="mt-4 text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed">
-          Built with cutting-edge tools and frameworks to deliver exceptional
-          performance, scalability, and user experience
+          Built with cutting-edge tools, frameworks, and architectural patterns to deliver exceptional
+          performance, scalability, and maintainability
         </p>
       </div>
 
@@ -160,7 +160,7 @@
           <h2 class="text-3xl font-bold text-white mb-3">
             Implementation Excellence
           </h2>
-          <p class="text-gray-400">Modern practices and patterns</p>
+          <p class="text-gray-400">Modern practices and architectural patterns</p>
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -230,7 +230,7 @@
             <div
               class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400"
             >
-              8+
+              12+
             </div>
             <div class="text-sm text-gray-400 uppercase tracking-wider">
               Technologies
@@ -276,7 +276,7 @@
             "Building tomorrow's web with
             <span
               class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-bold"
-              >today's best technologies</span
+              >today's best technologies and architectural patterns</span
             >"
           </p>
         </div>
@@ -330,21 +330,21 @@ interface ArchitecturePillar {
 
 const architecturePillars: ArchitecturePillar[] = [
   {
-    title: "Frontend Excellence",
+    title: "Clean Architecture",
     description:
-      "Built with Vue.js 3 and TypeScript for type-safe, reactive, and maintainable code",
-    icon: "⚡",
+      "CQRS pattern with clear separation of concerns, ensuring scalable and maintainable codebase",
+    icon: "🏗️",
   },
   {
     title: "Modern Tooling",
     description:
-      "Vite for lightning-fast builds and HMR, ensuring optimal developer experience",
+      "Vite for lightning-fast builds, TypeScript for type safety, and Vue 3 Composition API",
     icon: "🛠️",
   },
   {
-    title: "Design System",
+    title: "Design Excellence",
     description:
-      "TailwindCSS for consistent, responsive, and beautifully crafted user interfaces",
+      "TailwindCSS with custom design system for consistent, responsive, and beautiful UI",
     icon: "🎨",
   },
 ];
@@ -387,6 +387,40 @@ const techStack: TechCategory[] = [
     ],
   },
   {
+    title: "Architectural Patterns",
+    subtitle: "Enterprise-grade architecture",
+    icon: "🏛️",
+    iconClass: "bg-gradient-to-br from-cyan-500 to-blue-600 shadow-cyan-500/30",
+    technologies: [
+      {
+        name: "CQRS Pattern",
+        version: "Custom",
+        purpose: "Command Query Responsibility Segregation for clean separation",
+        features: [
+          "Command Handlers",
+          "Query Handlers",
+          "Event Bus",
+          "Clear Boundaries",
+        ],
+        color: "cyan",
+        icon: "🔀",
+      },
+      {
+        name: "Clean Architecture",
+        version: "Domain-Driven",
+        purpose: "Layered architecture with clear dependency rules",
+        features: [
+          "Domain Layer",
+          "Application Layer",
+          "Infrastructure Layer",
+          "Presentation Layer",
+        ],
+        color: "indigo",
+        icon: "🏗️",
+      },
+    ],
+  },
+  {
     title: "Styling & Design",
     subtitle: "Creating beautiful interfaces",
     icon: "🎨",
@@ -399,17 +433,17 @@ const techStack: TechCategory[] = [
         features: [
           "Custom Design System",
           "Responsive Design",
-          "Dark Mode",
+          "Dark Mode Support",
           "JIT Compilation",
         ],
         color: "cyan",
         icon: "💨",
       },
       {
-        name: "CSS3",
+        name: "CSS3 Animations",
         version: "Latest",
-        purpose: "Modern styling with animations and effects",
-        features: ["CSS Grid", "Flexbox", "Custom Properties", "Animations"],
+        purpose: "Modern styling with smooth animations and transitions",
+        features: ["CSS Grid", "Flexbox", "Keyframe Animations", "Transforms"],
         color: "blue",
         icon: "🎭",
       },
@@ -438,7 +472,7 @@ const techStack: TechCategory[] = [
           "SPA Navigation",
           "Route Guards",
           "Dynamic Routes",
-          "History Mode",
+          "Lazy Loading",
         ],
         color: "green",
         icon: "🧭",
@@ -446,7 +480,7 @@ const techStack: TechCategory[] = [
     ],
   },
   {
-    title: "State & Data",
+    title: "State & Data Management",
     subtitle: "Managing application state",
     icon: "📊",
     iconClass:
@@ -472,6 +506,41 @@ const techStack: TechCategory[] = [
         ],
         color: "green",
         icon: "🔄",
+      },
+    ],
+  },
+  {
+    title: "Quality & Testing",
+    subtitle: "Ensuring code quality",
+    icon: "✅",
+    iconClass:
+      "bg-gradient-to-br from-violet-500 to-purple-600 shadow-violet-500/30",
+    technologies: [
+      {
+        name: "ESLint",
+        version: "9.x",
+        purpose: "Linting and code quality enforcement",
+        features: [
+          "Vue Rules",
+          "TypeScript Rules",
+          "Auto-fix",
+          "Custom Rules",
+        ],
+        color: "purple",
+        icon: "🔍",
+      },
+      {
+        name: "Prettier",
+        version: "3.x",
+        purpose: "Code formatting for consistent style",
+        features: [
+          "Auto-formatting",
+          "EditorConfig",
+          "Git Hooks",
+          "Team Standards",
+        ],
+        color: "pink",
+        icon: "✨",
       },
     ],
   },
@@ -518,9 +587,23 @@ const performanceMetrics: PerformanceMetric[] = [
 
 const implementationFeatures: ImplementationFeature[] = [
   {
+    title: "CQRS Implementation",
+    description:
+      "Complete CQRS pattern with command/query handlers, event bus, and clear separation of read/write operations.",
+    techUsed: ["TypeScript", "Vue 3", "Custom Handlers"],
+    icon: "🔀",
+  },
+  {
+    title: "Clean Architecture Layers",
+    description:
+      "Domain, Application, Infrastructure, and Presentation layers with proper dependency inversion.",
+    techUsed: ["Domain Layer", "Use Cases", "Repositories"],
+    icon: "🏗️",
+  },
+  {
     title: "Component Architecture",
     description:
-      "Modular, reusable components following Vue.js best practices with proper prop typing and emit events.",
+      "Modular, reusable components following SOLID principles with proper prop typing and emit events.",
     techUsed: ["Vue 3", "TypeScript", "Composition API"],
     icon: "🧩",
   },
@@ -535,28 +618,35 @@ const implementationFeatures: ImplementationFeature[] = [
     title: "Type Safety",
     description:
       "Full TypeScript integration providing compile-time error checking and enhanced developer experience.",
-    techUsed: ["TypeScript", "Vue 3", "TSConfig"],
+    techUsed: ["TypeScript", "Vue 3", "Strict Mode"],
     icon: "🛡️",
   },
   {
     title: "Performance Optimization",
     description:
-      "Lazy loading, code splitting, and optimized assets for fast loading times and smooth interactions.",
+      "Lazy loading, code splitting, tree shaking, and optimized assets for fast loading times.",
     techUsed: ["Vite", "Vue Router", "Dynamic Imports"],
     icon: "⚡",
   },
   {
     title: "State Management",
     description:
-      "Centralized state management for user preferences, theme switching, and application data.",
-    techUsed: ["Pinia", "Composables", "LocalStorage"],
+      "Centralized state with Pinia stores following domain boundaries and using TypeScript interfaces.",
+    techUsed: ["Pinia", "Composables", "TypeScript"],
     icon: "🗄️",
+  },
+  {
+    title: "Code Quality",
+    description:
+      "ESLint, Prettier, and pre-commit hooks ensuring consistent code style and quality standards.",
+    techUsed: ["ESLint", "Prettier", "Husky"],
+    icon: "✅",
   },
   {
     title: "Modern Deployment",
     description:
-      "Automated build process with environment-specific configurations and optimized production builds.",
-    techUsed: ["Vite", "GitHub Actions", "CDN"],
+      "Automated build process with environment-specific configurations and CDN optimization.",
+    techUsed: ["Vite", "GitHub Actions", "Vercel"],
     icon: "🚀",
   },
 ];

@@ -1,16 +1,19 @@
 <template>
-  <footer class="relative text-gray-200 mt-12 w-full">
+  <footer class="relative text-gray-200 w-full bg-gradient-to-b from-[#0f1629] to-[#0a0f1e] overflow-hidden">
+    <!-- Animated gradient background -->
     <div class="absolute inset-0 z-0 pointer-events-none">
-      <div
-        class="absolute inset-0 bg-gradient-to-t from-transparent via-cyan-900/20 to-purple-900/20 w-full h-full"
-      ></div>
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-900/10 via-purple-900/10 to-cyan-900/10"></div>
+      <div class="absolute top-0 left-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
     </div>
 
-    <!-- Matching nav container -->
-    <div
-      class="relative z-10 w-full max-w-7xl mx-auto border-t border-gray-700 py-12 px-6"
-    >
-      <div class="grid lg:grid-cols-4 md:grid-cols-2 gap-10 mb-10">
+    <!-- Decorative top border with glow effect -->
+    <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"></div>
+    <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent blur-sm"></div>
+
+    <!-- Main footer content with better spacing -->
+    <div class="relative z-10 w-full max-w-7xl mx-auto pt-16 pb-8 px-6">
+      <div class="grid lg:grid-cols-4 md:grid-cols-2 gap-12 mb-12">
         <!-- Brand + About -->
         <div class="lg:col-span-2">
           <router-link
@@ -18,36 +21,31 @@
             class="flex items-center space-x-4 mb-6 group"
           >
             <div
-              class="relative w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-500 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 border-2 border-cyan-400/30"
+              class="relative w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-500 flex items-center justify-center shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:scale-110 hover:shadow-cyan-500/50"
             >
-              <span class="text-white font-bold text-lg tracking-tight"
-                >TS</span
-              >
+              <span class="text-white font-bold text-xl tracking-tight">TS</span>
             </div>
             <div class="flex flex-col">
               <h1
-                class="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors"
+                class="text-2xl font-bold bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent group-hover:from-cyan-400 group-hover:to-purple-400 transition-all"
               >
                 Thae Shwe Sin
               </h1>
-              <p
-                class="text-xs text-gray-400 group-hover:text-cyan-300 transition-colors"
-              >
+              <p class="text-sm text-gray-400 group-hover:text-cyan-300 transition-colors">
                 Full-Stack Developer
               </p>
             </div>
           </router-link>
 
-          <p class="text-gray-300 leading-relaxed mb-6 max-w-md">
+          <p class="text-gray-400 leading-relaxed mb-6 max-w-md text-[15px]">
             Passionate about building scalable, user-centric web applications
             with a focus on clean code and performance.
-            <br />
-            <span class="text-gray-400 italic text-xs mt-1 block">
-              Currently at ITVisionHub in Dagon Seikkan.
-            </span>
+          </p>
+          <p class="text-gray-500 italic text-sm mb-8">
+            Currently at ITVisionHub in Kamaryut.
           </p>
 
-          <div class="flex space-x-4 mt-6">
+          <div class="flex flex-wrap gap-3">
             <SocialLink
               url="https://github.com/thaeshwesin29"
               icon="github"
@@ -78,18 +76,17 @@
               icon="facebook"
               title="Facebook"
             />
-            <!-- Added -->
           </div>
         </div>
 
         <!-- Quick Links -->
         <div>
           <h4
-            class="text-sm font-semibold text-gray-400 mb-4 uppercase tracking-wider"
+            class="text-base font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-6 uppercase tracking-wider"
           >
             Quick Links
           </h4>
-          <ul class="space-y-2 mt-3">
+          <ul class="space-y-3">
             <li
               v-for="link in quickLinks"
               :key="link.name"
@@ -97,12 +94,12 @@
             >
               <router-link
                 :to="link.path"
-                class="text-gray-300 text-sm transition-colors pl-4 hover:text-cyan-400"
+                class="text-gray-400 text-[15px] transition-all duration-300 pl-4 hover:text-cyan-400 hover:pl-6 block"
               >
                 {{ link.name }}
               </router-link>
               <span
-                class="absolute left-0 top-0 h-full w-0.5 bg-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity rounded"
+                class="absolute left-0 top-1/2 -translate-y-1/2 h-0 w-0.5 bg-gradient-to-b from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-100 group-hover:h-full transition-all duration-300 rounded"
               ></span>
             </li>
           </ul>
@@ -110,13 +107,15 @@
 
         <!-- Contact -->
         <div>
-          <h4 class="text-sm font-semibold text-gray-300 mb-4 uppercase">
+          <h4 
+            class="text-base font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-6 uppercase tracking-wider"
+          >
             Contact
           </h4>
-          <ul class="space-y-3 text-gray-400 text-sm mt-3">
-            <li class="flex items-center">
+          <ul class="space-y-4 text-gray-400">
+            <li class="flex items-start group">
               <svg
-                class="w-4 h-4 mr-2 text-cyan-400"
+                class="w-5 h-5 mr-3 mt-0.5 text-cyan-400 group-hover:scale-110 transition-transform flex-shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -130,13 +129,13 @@
               </svg>
               <a
                 href="tel:+959684426329"
-                class="hover:text-white transition-colors"
+                class="hover:text-cyan-400 transition-colors text-[15px]"
                 >+95 968 442 6329</a
               >
             </li>
-            <li class="flex items-center">
+            <li class="flex items-start group">
               <svg
-                class="w-4 h-4 mr-2 text-cyan-400"
+                class="w-5 h-5 mr-3 mt-0.5 text-cyan-400 group-hover:scale-110 transition-transform flex-shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -150,13 +149,13 @@
               </svg>
               <a
                 href="mailto:thaeshwesin2000@gmail.com"
-                class="hover:text-white transition-colors"
+                class="hover:text-cyan-400 transition-colors text-[15px] break-all"
                 >thaeshwesin2000@gmail.com</a
               >
             </li>
-            <li class="flex items-center">
+            <li class="flex items-start group">
               <svg
-                class="w-4 h-4 mr-2 text-cyan-400"
+                class="w-5 h-5 mr-3 mt-0.5 text-cyan-400 group-hover:scale-110 transition-transform flex-shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -174,16 +173,17 @@
                   d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-              Dagon Seikkan, Yangon
+              <span class="text-[15px]">Kamaryut, Yangon</span>
             </li>
           </ul>
         </div>
       </div>
 
-      <!-- Copyright -->
-      <div class="border-t border-gray-700 pt-6 text-center">
-        <p class="text-gray-400 text-sm">
-          &copy; {{ currentYear }} Thae Shwe Sin. All rights reserved.
+      <!-- Copyright with better separation -->
+      <div class="relative mt-8 pt-8">
+        <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"></div>
+        <p class="text-gray-500 text-sm text-center">
+          &copy; {{ currentYear }} <span class="text-cyan-400 font-semibold">Thae Shwe Sin</span>. All rights reserved.
         </p>
       </div>
     </div>
@@ -208,13 +208,8 @@ const quickLinks = [
 </script>
 
 <style scoped>
-.footer-link-hover {
-  transition: color 0.3s ease, text-shadow 0.3s ease, transform 0.3s ease;
-}
-
-.footer-link-hover:hover {
-  transform: translateY(-2px);
-  text-shadow: 0 0 8px rgba(34, 211, 238, 0.8);
-  color: #22d3ee;
+/* Smooth transitions for all interactive elements */
+a, button {
+  transition: all 0.3s ease;
 }
 </style>

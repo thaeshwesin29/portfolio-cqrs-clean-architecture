@@ -9,10 +9,10 @@ services:
       context: ../auth-system
       dockerfile: Dockerfile
     volumes:
-      - ../auth-system:/var/www/html/thaeshwesin/auth-system/app:cached
-      - ../auth-system:/var/www/html/thaeshwesin/auth-system/routes:cached
-      - ../auth-system:/var/www/html/thaeshwesin/auth-system/config:cached
-      - ../auth-system:/var/www/html/thaeshwesin/auth-system/graphql:cached
+      - ../auth-system:/var/www/html/portfolio-cqrs/auth-system/app:cached
+      - ../auth-system:/var/www/html/portfolio-cqrs/auth-system/routes:cached
+      - ../auth-system:/var/www/html/portfolio-cqrs/auth-system/config:cached
+      - ../auth-system:/var/www/html/portfolio-cqrs/auth-system/graphql:cached
     expose:
       - "9000"
     env_file:
@@ -42,7 +42,7 @@ services:
     command: php artisan queue:work --queue=domain-events,default --sleep=1 --tries=5
     restart: always
     volumes:
-      - ../auth-system:/var/www/html/thaeshwesin/auth-system:cached
+      - ../auth-system:/var/www/html/portfolio-cqrs/auth-system:cached
     env_file:
       - ../auth-system/.env
     networks:
