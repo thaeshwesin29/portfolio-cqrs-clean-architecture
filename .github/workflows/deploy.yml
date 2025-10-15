@@ -3,7 +3,7 @@ name: Deploy Portfolio (Docker)
 on:
   push:
     branches:
-      - master  # adjust if your main branch is different
+      - main  # Adjust if your default branch is different
 
 jobs:
   deploy:
@@ -35,7 +35,7 @@ jobs:
             ##############################
             # Project directories
             ##############################
-            PROJECT_DIR=/var/www/html/portfolio
+            PROJECT_DIR=/var/www/html/portfolio-cqrs
             cd "$PROJECT_DIR"
 
             ##############################
@@ -43,15 +43,15 @@ jobs:
             ##############################
             if [ -d .git ]; then
               echo "Pulling latest code..."
-              git fetch origin master
-              git reset --hard origin/master
+              git fetch origin main
+              git reset --hard origin/main
             else
               echo "Cloning repository..."
-              git clone -b master git@github.com:kayzinkhaing/portfolio-cqrs-clean-architecture.git .
+              git clone -b main git@github.com:thaeshwesin29/portfolio-cqrs-clean-architecture.git .
             fi
 
             ##############################
-            # Deploy .env files
+            # Deploy .env files from secrets
             ##############################
             echo '${{ secrets.ENV_FILE }}' > auth-system/.env
             echo '${{ secrets.ENV_FRONTEND_FILE }}' > vue-auth-system/.env
@@ -65,8 +65,8 @@ jobs:
             ##############################
             # Docker: stop, rebuild, and start
             ##############################
-            docker compose -p portfolio -f docker-stack/docker-compose.yml down
-            docker compose -p portfolio -f docker-stack/docker-compose.yml up -d --build
+            docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml down
+            docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml up -d --build
 
             ##############################
             # Wait for essential containers to be healthy
@@ -81,14 +81,14 @@ jobs:
             ##############################
             # Run Laravel migrations
             ##############################
-            docker compose -p portfolio -f docker-stack/docker-compose.yml exec -T laravel php artisan migrate --force
+            docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml exec -T laravel php artisan migrate --force
 
             ##############################
             # Clear cache & set permissions
             ##############################
-            docker compose -p portfolio -f docker-stack/docker-compose.yml exec -T laravel php artisan config:cache
-            docker compose -p portfolio -f docker-stack/docker-compose.yml exec -T laravel php artisan route:cache
-            docker compose -p portfolio -f docker-stack/docker-compose.yml exec -T laravel php artisan view:cache
+            docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml exec -T laravel php artisan config:cache
+            docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml exec -T laravel php artisan route:cache
+            docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml exec -T laravel php artisan view:cache
 
             ##############################
             # Reload NGINX reverse proxy
