@@ -1,30 +1,99 @@
-name: Deploy Portfolio CQRS
+name: Deploy Portfolio (Docker)
 
 on:
   push:
     branches:
-      - main
+      - master  # adjust if your main branch is different
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code
-      - name: Checkout
-        uses: actions/checkout@v4
+      # 1️⃣ Checkout the repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      # 2. Setup SSH key
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.8.1
+      # 2️⃣ Set up SSH key
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # 3. Deploy to server
-      - name: Deploy to Server
+      # 3️⃣ Add server to known_hosts
+      - name: Add server to known_hosts
         run: |
-          ssh -o StrictHostKeyChecking=no root@YOUR_SERVER_IP << 'EOF'
-            cd /var/www/html/portfolio-cqrs
-            git pull origin main
-            docker compose -f docker-stack/docker-compose.yml up -d --build
+          mkdir -p ~/.ssh
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      # 4️⃣ Deploy on the server
+      - name: Deploy via SSH (Docker)
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            set -euxo pipefail
+
+            ##############################
+            # Project directories
+            ##############################
+            PROJECT_DIR=/var/www/html/portfolio
+            cd "$PROJECT_DIR"
+
+            ##############################
+            # Pull or clone repository
+            ##############################
+            if [ -d .git ]; then
+              echo "Pulling latest code..."
+              git fetch origin master
+              git reset --hard origin/master
+            else
+              echo "Cloning repository..."
+              git clone -b master git@github.com:kayzinkhaing/portfolio-cqrs-clean-architecture.git .
+            fi
+
+            ##############################
+            # Deploy .env files
+            ##############################
+            echo '${{ secrets.ENV_FILE }}' > auth-system/.env
+            echo '${{ secrets.ENV_FRONTEND_FILE }}' > vue-auth-system/.env
+            chmod 600 auth-system/.env vue-auth-system/.env
+
+            ##############################
+            # Ensure external proxy network exists
+            ##############################
+            docker network inspect proxy >/dev/null 2>&1 || docker network create proxy
+
+            ##############################
+            # Docker: stop, rebuild, and start
+            ##############################
+            docker compose -p portfolio -f docker-stack/docker-compose.yml down
+            docker compose -p portfolio -f docker-stack/docker-compose.yml up -d --build
+
+            ##############################
+            # Wait for essential containers to be healthy
+            ##############################
+            for service in mongo rabbitmq mysql; do
+              echo "Waiting for $service to be healthy..."
+              until [ "$(docker inspect -f '{{.State.Health.Status}}' portfolio-$service-1 2>/dev/null || echo unhealthy)" == "healthy" ]; do
+                sleep 5
+              done
+            done
+
+            ##############################
+            # Run Laravel migrations
+            ##############################
+            docker compose -p portfolio -f docker-stack/docker-compose.yml exec -T laravel php artisan migrate --force
+
+            ##############################
+            # Clear cache & set permissions
+            ##############################
+            docker compose -p portfolio -f docker-stack/docker-compose.yml exec -T laravel php artisan config:cache
+            docker compose -p portfolio -f docker-stack/docker-compose.yml exec -T laravel php artisan route:cache
+            docker compose -p portfolio -f docker-stack/docker-compose.yml exec -T laravel php artisan view:cache
+
+            ##############################
+            # Reload NGINX reverse proxy
+            ##############################
+            cd /var/www/html/reverse-proxy
+            docker compose exec reverse-proxy nginx -s reload
+
           EOF
