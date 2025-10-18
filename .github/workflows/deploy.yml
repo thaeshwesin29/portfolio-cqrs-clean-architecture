@@ -36,9 +36,9 @@ jobs:
           script: |
             set -euxo pipefail
 
-            # Define variables
-            APP_NAME=portfolio-cqrs
-            PROJECT_DIR=/var/www/html/$APP_NAME
+            # Define variables safely with defaults
+            : "${APP_NAME:=portfolio-cqrs}"
+            : "${PROJECT_DIR:=/var/www/html/$APP_NAME}"
             ENV_FILE="${{ secrets.ENV_FILE }}"
             ENV_FRONTEND_FILE="${{ secrets.ENV_FRONTEND_FILE }}"
 
@@ -68,7 +68,7 @@ jobs:
 
             # Wait for services to be healthy
             for service in mongo rabbitmq mysql; do
-              until [ "$(docker inspect -f '{{.State.Health.Status}}' $APP_NAME-$service-1 2>/dev/null || echo unhealthy)" == "healthy" ]; do
+              until [ "$(docker inspect -f '{{.State.Health.Status}}' "$APP_NAME-$service-1" 2>/dev/null || echo unhealthy)" == "healthy" ]; do
                 echo "⏳ Waiting for $service to be healthy..."
                 sleep 5
               done
