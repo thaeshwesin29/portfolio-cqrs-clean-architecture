@@ -1,5 +1,6 @@
 <template>
   <section
+<<<<<<< HEAD
     class="relative min-h-screen bg-gradient-to-br from-slate-950 via-blue-950/30 to-slate-950 text-gray-100 py-24 px-6 overflow-hidden"
   >
     <!-- Background Elements -->
@@ -16,6 +17,17 @@
         </h2>
         <p class="mt-6 text-gray-300 text-lg max-w-2xl mx-auto leading-relaxed">
           A selection of my featured works, showcasing design, development, and creativity.
+=======
+    class="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-gray-100 py-24 px-6"
+  >
+    <div class="max-w-7xl mx-auto space-y-16">
+      <!-- Section Header -->
+      <div class="text-center space-y-4">
+        <h2 class="text-xl md:text-3xl font-bold leading-tight">My Projects</h2>
+        <p class="mt-4 text-gray-400 text-lg max-w-2xl mx-auto">
+          A selection of my featured works, showcasing design, development, and
+          creativity.
+>>>>>>> e98581a (Skills)
         </p>
       </div>
 
@@ -55,7 +67,9 @@
               :alt="project.title"
               class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
             />
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/40 to-transparent"></div>
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/40 to-transparent"
+            ></div>
 
             <!-- Floating Badge -->
             <div class="absolute top-3 right-3">
@@ -67,7 +81,13 @@
             </div>
 
             <!-- Title Overlay -->
+<<<<<<< HEAD
             <h3 class="absolute bottom-3 left-3 text-base font-bold text-white">
+=======
+            <h3
+              class="absolute bottom-4 left-5 text-xl font-semibold text-white group-hover:text-amber-400 transition-colors"
+            >
+>>>>>>> e98581a (Skills)
               {{ project.title }}
             </h3>
           </div>
@@ -83,6 +103,7 @@
               </p>
             </div>
 
+<<<<<<< HEAD
             <!-- Technologies -->
             <div class="flex flex-wrap gap-2 mt-3">
               <div
@@ -98,6 +119,11 @@
             <div class="flex justify-between items-center pt-2 border-t border-slate-700/30">
               <span
                 class="text-xs px-2 py-1 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-300 border border-blue-400/20 font-medium"
+=======
+            <div class="flex justify-between items-center pt-2">
+              <span
+                class="text-xs px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-400/20"
+>>>>>>> e98581a (Skills)
               >
                 {{ project.category }}
               </span>
@@ -111,9 +137,15 @@
             </div>
           </div>
 
+<<<<<<< HEAD
           <!-- Glow Effect -->
           <div
             class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 opacity-0 group-hover:opacity-15 transition-opacity duration-500 blur-lg rounded-xl"
+=======
+          <!-- Decorative Glow on Hover -->
+          <div
+            class="absolute -inset-1 bg-gradient-to-r from-amber-500/10 to-pink-500/10 opacity-0 group-hover:opacity-60 transition-opacity blur-xl rounded-3xl"
+>>>>>>> e98581a (Skills)
           ></div>
         </div>
       </div>
@@ -131,6 +163,7 @@
   </section>
 </template>
 
+<<<<<<< HEAD
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useProjects } from "@/composables/useProjects";
@@ -188,6 +221,38 @@ function getTechIcon(tech: any) {
 onMounted(() => {
   refetch();
 });
+=======
+<script setup>
+import realestate from "@/assets/images/realestate.png";
+import mmGive from "@/assets/images/mm_give.png";
+import invoice from "@/assets/images/image.png";
+
+const projects = [
+  {
+    title: "Portfolio Website",
+    description:
+      "A sleek and modern personal portfolio built with Vue.js and Tailwind.",
+    image: realestate,
+    category: "Web Design",
+    link: "#",
+  },
+  {
+    title: "E-commerce Platform",
+    description:
+      "An end-to-end ecommerce solution with Laravel + Vue integration.",
+    image: mmGive,
+    category: "Full Stack",
+    link: "#",
+  },
+  {
+    title: "Restaurant Invoice System",
+    description: "Dynamic invoice management system tailored for restaurants.",
+    image: invoice,
+    category: "Business App",
+    link: "#",
+  },
+];
+>>>>>>> e98581a (Skills)
 </script>
 
 <style scoped>
