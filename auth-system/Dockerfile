@@ -29,7 +29,7 @@ RUN composer config --global process-timeout 2000
 WORKDIR /var/www/html/thaeshwezin/auth-system
 
 # -----------------------
-# Copy composer files first for caching
+# Copy only composer files first for caching
 # -----------------------
 COPY composer.json composer.lock ./
 
@@ -39,21 +39,21 @@ COPY composer.json composer.lock ./
 RUN composer install --no-interaction --prefer-dist --ignore-platform-reqs --optimize-autoloader --no-scripts
 
 # -----------------------
-# Copy the rest of the application with correct ownership
+# Copy the rest of the application
 # -----------------------
-COPY --chown=www-data:www-data . /var/www/html/thaeshwezin/auth-system
+COPY . /var/www/html/thaeshwezin/auth-system
 
 # -----------------------
-# Set permissions only on folders Laravel needs write access
-# -----------------------
-RUN chmod -R 755 /var/www/html/thaeshwezin/auth-system/storage \
-    && chmod -R 755 /var/www/html/thaeshwezin/auth-system/bootstrap/cache
-
-# -----------------------
-# Optional: run artisan scripts if needed
+# Run artisan scripts now that artisan exists
 # -----------------------
 # RUN composer dump-autoload --optimize \
 #     && php artisan package:discover
+
+# -----------------------
+# Set permissions
+# -----------------------
+RUN chown -R www-data:www-data /var/www/html/thaeshwezin/auth-system \
+    && chmod -R 755 /var/www/html/thaeshwezin/auth-system/storage
 
 # -----------------------
 # Expose port and start PHP-FPM
