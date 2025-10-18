@@ -36,9 +36,12 @@ jobs:
           script: |
             set -euxo pipefail
 
-            # Define variables safely with defaults
+            # Safe defaults for unbound variables
             : "${APP_NAME:=portfolio-cqrs}"
             : "${PROJECT_DIR:=/var/www/html/$APP_NAME}"
+            export APP_NAME
+            export PROJECT_DIR
+
             ENV_FILE="${{ secrets.ENV_FILE }}"
             ENV_FRONTEND_FILE="${{ secrets.ENV_FRONTEND_FILE }}"
 
