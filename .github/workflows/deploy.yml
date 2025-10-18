@@ -14,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Test SSH connection first
+      # 2️⃣ Test SSH connection
       - name: 🔍 Test SSH connection
         uses: appleboy/ssh-action@v0.1.9
         with:
@@ -25,7 +25,7 @@ jobs:
           script: |
             echo "✅ SSH connection successful to $(hostname)"
 
-      # 3️⃣ Deploy to server
+      # 3️⃣ Deploy application
       - name: 🚀 Deploy Application
         uses: appleboy/ssh-action@v0.1.9
         with:
@@ -36,10 +36,17 @@ jobs:
           script: |
             set -euxo pipefail
 
-            PROJECT_DIR=/var/www/html/portfolio-cqrs
+            # Define variables
+            APP_NAME=portfolio-cqrs
+            PROJECT_DIR=/var/www/html/$APP_NAME
+            ENV_FILE="${{ secrets.ENV_FILE }}"
+            ENV_FRONTEND_FILE="${{ secrets.ENV_FRONTEND_FILE }}"
+
+            # Move to project directory
+            mkdir -p "$PROJECT_DIR"
             cd "$PROJECT_DIR" || exit 1
 
-            # Pull or clone
+            # Pull latest code
             if [ -d .git ]; then
               git fetch origin main
               git reset --hard origin/main
@@ -47,29 +54,32 @@ jobs:
               git clone -b main git@github.com:thaeshwesin29/portfolio-cqrs-clean-architecture.git .
             fi
 
-            # Write env files
-            echo "${{ secrets.ENV_FILE }}" > auth-system/.env
-            echo "${{ secrets.ENV_FRONTEND_FILE }}" > vue-auth-system/.env
+            # Write environment files
+            echo "$ENV_FILE" > auth-system/.env
+            echo "$ENV_FRONTEND_FILE" > vue-auth-system/.env
             chmod 600 auth-system/.env vue-auth-system/.env
 
-            # Docker network
+            # Ensure Docker network exists
             docker network inspect proxy >/dev/null 2>&1 || docker network create proxy
 
             # Stop and build containers
-            docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml down
-            docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml up -d --build
+            docker compose -p "$APP_NAME" -f docker-stack/docker-compose.yml down
+            docker compose -p "$APP_NAME" -f docker-stack/docker-compose.yml up -d --build
 
-            # Wait for services
+            # Wait for services to be healthy
             for service in mongo rabbitmq mysql; do
-              until [ "$(docker inspect -f '{{.State.Health.Status}}' portfolio-$service-1 2>/dev/null || echo unhealthy)" == "healthy" ]; do
+              until [ "$(docker inspect -f '{{.State.Health.Status}}' $APP_NAME-$service-1 2>/dev/null || echo unhealthy)" == "healthy" ]; do
+                echo "⏳ Waiting for $service to be healthy..."
                 sleep 5
               done
             done
 
-            # Run migrations & optimize
-            docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml exec -T laravel php artisan migrate --force
-            docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml exec -T laravel php artisan optimize
+            # Run migrations and optimize Laravel
+            docker compose -p "$APP_NAME" -f docker-stack/docker-compose.yml exec -T laravel php artisan migrate --force
+            docker compose -p "$APP_NAME" -f docker-stack/docker-compose.yml exec -T laravel php artisan optimize
 
-            # Reload reverse-proxy nginx
+            # Reload reverse-proxy Nginx
             cd /var/www/html/reverse-proxy
             docker compose exec reverse-proxy nginx -s reload
+
+            echo "✅ Deployment completed successfully!"
