@@ -3,7 +3,7 @@ name: Deploy Portfolio (Docker)
 on:
   push:
     branches:
-      - main  # Trigger deployment on main branch
+      - main
 
 jobs:
   deploy:
@@ -14,8 +14,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Deploy via SSH
-      - name: Deploy to server
+      # 2️⃣ Test SSH connection first (optional but useful)
+      - name: 🔍 Test SSH connection
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            echo "✅ SSH connection successful to $(hostname)"
+
+      # 3️⃣ Deploy to server
+      - name: 🚀 Deploy Application
         uses: appleboy/ssh-action@v0.1.9
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -25,15 +36,9 @@ jobs:
           script: |
             set -euxo pipefail
 
-            ##############################
-            # Project directories
-            ##############################
             PROJECT_DIR=/var/www/html/portfolio-cqrs
-            cd "$PROJECT_DIR"
+            cd "$PROJECT_DIR" || exit 1
 
-            ##############################
-            # Pull or clone repository
-            ##############################
             if [ -d .git ]; then
               echo "Pulling latest code..."
               git fetch origin main
@@ -43,27 +48,15 @@ jobs:
               git clone -b main git@github.com:thaeshwesin29/portfolio-cqrs-clean-architecture.git .
             fi
 
-            ##############################
-            # Deploy .env files from secrets
-            ##############################
             echo "${{ secrets.ENV_FILE }}" > auth-system/.env
             echo "${{ secrets.ENV_FRONTEND_FILE }}" > vue-auth-system/.env
             chmod 600 auth-system/.env vue-auth-system/.env
 
-            ##############################
-            # Ensure external proxy network exists
-            ##############################
             docker network inspect proxy >/dev/null 2>&1 || docker network create proxy
 
-            ##############################
-            # Docker: stop, rebuild, and start
-            ##############################
             docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml down
             docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml up -d --build
 
-            ##############################
-            # Wait for essential containers to be healthy
-            ##############################
             for service in mongo rabbitmq mysql; do
               echo "Waiting for $service to be healthy..."
               until [ "$(docker inspect -f '{{.State.Health.Status}}' portfolio-$service-1 2>/dev/null || echo unhealthy)" == "healthy" ]; do
@@ -71,20 +64,8 @@ jobs:
               done
             done
 
-            ##############################
-            # Run Laravel migrations
-            ##############################
             docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml exec -T laravel php artisan migrate --force
+            docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml exec -T laravel php artisan optimize
 
-            ##############################
-            # Clear Laravel cache & optimize
-            ##############################
-            docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml exec -T laravel php artisan config:cache
-            docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml exec -T laravel php artisan route:cache
-            docker compose -p portfolio-cqrs -f docker-stack/docker-compose.yml exec -T laravel php artisan view:cache
-
-            ##############################
-            # Reload NGINX reverse proxy
-            ##############################
             cd /var/www/html/reverse-proxy
             docker compose exec reverse-proxy nginx -s reload
