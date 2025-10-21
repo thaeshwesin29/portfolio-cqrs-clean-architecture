@@ -7,19 +7,19 @@ export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production'
 
   return {
-    plugins: [
-      vue(),
-      tsconfigPaths(),
-    ],
+    plugins: [vue(), tsconfigPaths()],
 
-    // make Vite use our PostCSS config and keep CSS modules only for *.module.*
     css: {
       postcss: './postcss.config.cjs',
       modules: {
-        // default behavior: treat only *.module.* files as CSS modules
         scopeBehaviour: 'local',
         generateScopedName: isProduction ? '[hash:base64:8]' : '[name]__[local]__[hash:base64:5]',
       },
+    },
+
+    // Ensure Vite knows about third-party CSS dependencies
+    optimizeDeps: {
+      include: ['vue-toastification'],
     },
 
     resolve: {
@@ -37,7 +37,7 @@ export default defineConfig(({ mode }) => {
 
     server: {
       port: 5174,
-      open: true,
+      open: false, // disable xdg-open in Docker
       strictPort: true,
       hmr: { overlay: true },
     },
@@ -62,21 +62,6 @@ export default defineConfig(({ mode }) => {
       __API_BASE__: JSON.stringify(
         isProduction ? 'https://api.example.com' : 'http://localhost:8000'
       ),
-    },
-
-    test: {
-      globals: true,
-      environment: 'jsdom',
-      setupFiles: './tests/setup.ts',
-      include: ['src/**/*.{test,spec}.{ts,tsx}'],
-      coverage: {
-        provider: 'v8',
-        reporter: ['text', 'html', 'lcov'],
-        reportsDirectory: './coverage',
-        all: true,
-        include: ['src/**/*.{ts,vue}'],
-        exclude: ['src/main.ts', '**/__tests__/**'],
-      },
     },
   }
 })
