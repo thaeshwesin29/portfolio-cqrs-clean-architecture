@@ -51,7 +51,8 @@
                 v-else
                 class="text-5xl md:text-6xl lg:text-3xl font-black text-white animate-name-reveal"
               >
-                {{ displayName }}
+                <!-- {{ displayName }} -->
+                Thae Shwe Sin
               </span>
             </div>
           </div>
